@@ -36,6 +36,16 @@ template:
                                 branch: main
                                 folderPath: terraform/
                               type: Github
+                          variables:
+                            - name: service_name
+                              type: String
+                              value: <+pipeline.variables.service_name>
+                            - name: service_identifier
+                              type: String
+                              value: <+pipeline.variables.service_identifier>
+                            - name: service_type
+                              type: String
+                              value: <+pipeline.variables.service_type>
                     timeout: 10m
           tags: {}
     variables:
