@@ -1,19 +1,36 @@
+
+variable "service_name" {
+  type        = string
+  description = "Name of the service"
+}
+
+variable "service_identifier" {
+  type        = string
+  description = "Identifier for the service"
+}
+
+variable "service_type" {
+  type        = string
+  description = "The type of service"
+}
+
+
 resource "harness_platform_service" "simple_service" {
-  name        = "transaction-ingestor-test"
-  identifier  = "transactioningestortest"
+  name        = var.service_name #"transaction-ingestor-test"
+  identifier  = var.service_identifier #"transactioningestortest"
   description = "Minimal service without connectors"
   org_id      = "ing175org"
   project_id  = "ing175ip1"
   yaml = <<-EOT
       service:
-        name: transaction-ingestor-test
-        identifier: transactioningestortest
+        name: ${var.service_name}
+        identifier: ${var.service_identifier}
         serviceDefinition:
-          type: NativeHelm
+          type: ${var.service_type}
           spec:
             manifests:
               - manifest:
-                  identifier: transactioningestortest
+                  identifier: ${var.service_identifier}
                   type: HelmChart
                   spec:
                     store:
