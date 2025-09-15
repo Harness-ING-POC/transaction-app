@@ -6,14 +6,14 @@ resource "harness_platform_service" "simple_service" {
   project_id  = "ing175ip1"
   yaml = <<-EOT
       service:
-        name: transaction-ingestor-test}
-        identifier: transactioningestortest}
+        name: transaction-ingestor-test
+        identifier: transactioningestortest
         serviceDefinition:
           type: NativeHelm
           spec:
             manifests:
               - manifest:
-                  identifier: transactioningestortest}
+                  identifier: transactioningestortest
                   type: HelmChart
                   spec:
                     store:
