@@ -1,5 +1,4 @@
 resource "harness_platform_service" "simple_service" {
-  count       = length(var.itterator)
   name        = "transaction-ingestor-test"
   identifier  = "transactioningestortest"
   description = "Minimal service without connectors"
