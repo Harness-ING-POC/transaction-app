@@ -14,13 +14,22 @@ variable "service_type" {
   description = "The type of service"
 }
 
+variable "org_name" {
+  type        = string
+  description = "Name of the org"
+}
+
+variable "project_name" {
+  type        = string
+  description = "Name of the project"
+}
 
 resource "harness_platform_service" "simple_service" {
   name        = var.service_name #"transaction-ingestor-test"
   identifier  = var.service_identifier #"transactioningestortest"
   description = "Minimal service without connectors"
-  org_id      = "ing175org"
-  project_id  = "ing175ip1"
+  org_id      = var.org_name
+  project_id  = var.project_name
   yaml = <<-EOT
       service:
         name: ${var.service_name}
@@ -48,7 +57,7 @@ resource "harness_platform_service" "simple_service" {
                     helmVersion: V3
                     fetchHelmChartMetadata: false
         gitOpsEnabled: false
-        orgIdentifier: ing175org
-        projectIdentifier: ing175ip1
+        orgIdentifier: ${var.org_name}
+        projectIdentifier: ${var.project_name}
   EOT
 }
