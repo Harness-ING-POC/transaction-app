@@ -65,4 +65,4 @@ template:
         description: The type of the service. By default is set to nativeHelm but can take kubernetes values.
         required: true
         value: <+input>.default(NativeHelm)
-  projectIdentifier: ing175ip23
+  projectIdentifier: ing175ip1
