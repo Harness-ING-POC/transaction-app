@@ -40,9 +40,9 @@ template:
                             - varFile:
                                 spec:
                                   content: |-
-                                    service_name = <+pipeline.variables.service_name>
-                                    service_identifier = <+pipeline.pipeline.variables.service_identifier>
-                                    service_type = <+pipeline.pipeline.variables.service_type>
+                                    service_name = "<+pipeline.variables.service_name>"
+                                    service_identifier = "<+pipeline.pipeline.variables.service_identifier>"
+                                    service_type = "<+pipeline.pipeline.variables.service_type>"
                                 identifier: onboardingVars
                                 type: Inline
                     timeout: 10m
