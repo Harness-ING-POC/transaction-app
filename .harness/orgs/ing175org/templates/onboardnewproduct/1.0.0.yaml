@@ -36,16 +36,15 @@ template:
                                 branch: main
                                 folderPath: terraform/
                               type: Github
-                          variables:
-                            - name: service_name
-                              type: String
-                              value: <+pipeline.variables.service_name>
-                            - name: service_identifier
-                              type: String
-                              value: <+pipeline.variables.service_identifier>
-                            - name: service_type
-                              type: String
-                              value: <+pipeline.variables.service_type>
+                          varFiles:
+                            - varFile:
+                                spec:
+                                  content: |-
+                                    service_name = <+pipeline.variables.service_name>
+                                    service_identifier = <+pipeline.pipeline.variables.service_identifier>
+                                    service_type = <+pipeline.pipeline.variables.service_type>
+                                identifier: onboardingVars
+                                type: Inline
                     timeout: 10m
           tags: {}
     variables:
