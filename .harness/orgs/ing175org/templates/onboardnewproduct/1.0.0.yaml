@@ -43,15 +43,15 @@ template:
         type: String
         description: Provide a value for the service name of your application
         required: true
-        value: default_helm_service
+        value: <+input>.default("default_helm_service")
       - name: service_identifier
         type: String
         description: Provide a value for the service identifier (used as a unique ID). This value can be conssisted only from string values no spaces dashes or underscores (e.g. exampleserviceidentifier)
         required: true
-        value: defaultidentifier
+        value: <+input>.default("defaultidentifier")
       - name: service_type
         type: String
         description: The type of the service. By default is set to nativeHelm but can take kubernetes values.
         required: false
-        value: nativeHelm
+        value: <+input>.default("nativeHelm")
   projectIdentifier: ing175ip23
