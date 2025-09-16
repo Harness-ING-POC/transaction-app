@@ -12,8 +12,8 @@ resource "harness_platform_template" "app_deploy_template" {
       identifier: kingsroaddeployment
       versionLabel: 1.0.0
       type: Stage
-      projectIdentifier: ${var.proj_id}
-      orgIdentifier: ${var.org_id}
+      projectIdentifier: "${var.proj_id}"
+      orgIdentifier: "${var.org_id}"
       spec:
         type: Deployment
         spec:
