@@ -12,18 +12,28 @@ resource "harness_platform_environment" "onboard_envs" {
 resource "harness_platform_infrastructure" "infra" {
   for_each    = toset(var.env_names)
 
-  name        = "helm-infrastructure"
-  identifier  = "helminfra-${each.value}"
+  name        = "k8s-helm"
+  identifier  = "k8shelm-${each.key}"
+  org_id      = var.org_id
+  project_id  = var.proj_id
   env_id      = harness_platform_environment.onboard_envs[each.key].identifier
   type        = "KubernetesDirect"
   deployment_type = "NativeHelm"
 
-  spec {
-    connector_ref = "k8sprod"
-    namespace     = "ing175-ns"
-    release_name  = "${var.service_name}-<+INFRA_KEY_SHORT_ID>"
-  }
-
-  allow_simultaneous_deployments = true
-  scoped_services = []
+  yaml = <<-EOT
+infrastructureDefinition:
+  name: k8s-helm
+  identifier: k8shelm-${each.key}
+  orgIdentifier: ${var.org_id}
+  projectIdentifier: ${var.proj_id}
+  environmentRef: ${each.key}
+  deploymentType: NativeHelm
+  type: KubernetesDirect
+  spec:
+    connectorRef: k8sprod
+    namespace: ing175-ns
+    releaseName: ${var.service_name}-<+INFRA_KEY_SHORT_ID>
+  allowSimultaneousDeployments: true
+  scopedServices: []
+EOT
 }
