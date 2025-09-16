@@ -13,7 +13,7 @@ resource "harness_platform_infrastructure" "infra" {
   for_each    = toset(var.env_names)
 
   name        = "k8s-helm"
-  identifier  = "k8shelm-${each.key}"
+  identifier  = "k8shelm${each.key}"
   org_id      = var.org_id
   project_id  = var.proj_id
   env_id      = harness_platform_environment.onboard_envs[each.key].identifier
