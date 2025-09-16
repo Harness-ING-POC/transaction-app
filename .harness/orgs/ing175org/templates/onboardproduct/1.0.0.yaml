@@ -73,10 +73,22 @@ template:
                       configuration:
                         type: InheritFromPlan
                     timeout: 10m
+                    failureStrategies:
+                      - onFailure:
+                          errors:
+                            - AllErrors
+                          action:
+                            type: PipelineRollback
           tags: {}
           when:
             pipelineStatus: Success
             condition: <+pipeline.variables.action_type> == "onboard"
+          failureStrategies:
+            - onFailure:
+                errors:
+                  - AllErrors
+                action:
+                  type: PipelineRollback
       - stage:
           name: Offboard Product
           identifier: Offboard_Product
