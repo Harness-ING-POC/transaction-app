@@ -9,5 +9,5 @@ terraform {
 provider "harness" {  
     endpoint   = "https://workshop.harness.io"  
     account_id = "IFG41DWvSnaRLOVNB2uesg"  
-    platform_api_key    = "pat.IFG41DWvSnaRLOVNB2uesg.68c81ec0dc4c4c477bf32ea2.KMzCPUSZ2Uxit1jgwrcG"  
+    platform_api_key    = "pat.IFG41DWvSnaRLOVNB2uesg.68c92a3daf7b346133901c0a.65ffUp9xZQ4FBJAcGgTu"  
 }
