@@ -12,8 +12,8 @@ template:
   identifier: "identifier"
   versionLabel: "ab"
   type: Stage
-  projectIdentifier: ${harness_platform_project.test.id}
-  orgIdentifier: ${harness_platform_project.test.org_id}
+  projectIdentifier: ${var.project_id}
+  orgIdentifier: ${var.org_id}
   tags: {}
   spec:
     type: Deployment
