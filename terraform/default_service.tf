@@ -47,11 +47,11 @@ resource "harness_platform_service" "simple_service" {
                       spec:
                         connectorRef: harnessconnector
                         gitFetchType: Branch
-                        folderPath: helmcharts/${var.service_name}
+                        folderPath: example/helmcharts/${var.service_name}
                         branch: main
                     subChartPath: ""
                     valuesPaths:
-                      - helmcharts/${var.service_name}/values.yaml
+                      - example/helmcharts/${var.service_name}/values.yaml
                     skipResourceVersioning: false
                     enableDeclarativeRollback: false
                     helmVersion: V3
