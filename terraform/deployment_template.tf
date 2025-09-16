@@ -5,7 +5,6 @@ resource "harness_platform_template" "app_deploy_template" {
   project_id  = var.proj_id
   version     = "1.0.0"
   description = "Template for rolling or canary deployment with approval"
-  is_remote   = true
 
   git_details {
     branch_name    = "main"
