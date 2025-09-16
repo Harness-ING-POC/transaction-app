@@ -47,8 +47,8 @@ template:
                                   service_name      = "<+pipeline.variables.service_name>"
                                   service_identifier = "<+pipeline.variables.service_identifier>"
                                   service_type      = "<+pipeline.variables.service_type>"
-                                  org_name          = "<+org.name>"
-                                  project_name      = "<+project.name>"
+                                  org_name          = "<+org.org.identifier>>"
+                                  project_name      = "<+project.identifier>>"
                               identifier: onboardingVarFile
                               type: Inline
                         secretManagerRef: harnessSecretManager
