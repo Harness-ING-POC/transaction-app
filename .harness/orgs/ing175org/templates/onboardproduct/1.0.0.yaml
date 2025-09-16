@@ -42,15 +42,18 @@ template:
                             type: Github
                         varFiles:
                           - varFile:
+                              type: Remote
+                              identifier: onboardingVars
                               spec:
-                                content: |
-                                  service_name      = "<+pipeline.variables.service_name>"
-                                  service_identifier = "<+pipeline.variables.service_identifier>"
-                                  service_type      = "<+pipeline.variables.service_type>"
-                                  org_id            = "<+org.org.identifier>"
-                                  proj_id           = "<+project.identifier>"
-                              identifier: onboardingVarFile
-                              type: Inline
+                                store:
+                                  type: Github
+                                  spec:
+                                    gitFetchType: Branch
+                                    repoName: ""
+                                    branch: main
+                                    paths:
+                                      - resources/terraform_vars.tfvars
+                                    connectorRef: harnessconnector
                         secretManagerRef: harnessSecretManager
                         skipRefreshCommand: false
                     timeout: 10m
