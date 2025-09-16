@@ -39,19 +39,19 @@ resource "harness_platform_service" "simple_service" {
           spec:
             manifests:
               - manifest:
-                  identifier: ${var.service_identifier}
+                  identifier: ${var.service_identifier}_manifest
                   type: HelmChart
                   spec:
                     store:
                       type: Github
                       spec:
-                        connectorRef: githubaccount
+                        connectorRef: harnessconnector
                         gitFetchType: Branch
-                        folderPath: helmcharts/transaction-ingestor
+                        folderPath: helmcharts/${var.service_name}
                         branch: main
                     subChartPath: ""
                     valuesPaths:
-                      - helmcharts/transaction-ingestor/values.yaml
+                      - helmcharts/${var.service_name}/values.yaml
                     skipResourceVersioning: false
                     enableDeclarativeRollback: false
                     helmVersion: V3
