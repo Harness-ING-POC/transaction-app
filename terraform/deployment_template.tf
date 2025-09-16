@@ -10,71 +10,116 @@ resource "harness_platform_template" "stage_template_inline" {
   template_yaml = <<-EOT
 template:
   name: "Kingsroad deployment"
-  identifier: "kingsroaddeployment"
-  versionLabel: "1.0.0"
+  identifier: kingsroaddeployment
+  versionLabel: 1.0.0
   type: Stage
   projectIdentifier: ${var.proj_id}
   orgIdentifier: ${var.org_id}
+  tags: {}
   spec:
     type: Deployment
     spec:
       deploymentType: NativeHelm
-      service:
-        serviceRef: <+input>
-        serviceInputs: <+input>
       environment:
         environmentRef: <+input>
         deployToAll: false
         environmentInputs: <+input>
+        serviceOverrideInputs: <+input>
         infrastructureDefinitions: <+input>
+      service:
+        serviceRef: <+input>
+        serviceInputs: <+input>
+        failureStrategies:
+          - onFailure:
+              errors:
+                - AllErrors
+              action:
+                type: PipelineRollback
       execution:
         steps:
           - step:
-              name: Strategy Selector
-              identifier: strategy_selector
-              type: ShellScript
-              spec:
-                shell: Bash
-                command: echo "Selected strategy: <+strategy>"
+              name: Helm Deployment
+              identifier: helmDeployment
+              type: HelmDeploy
               timeout: 10m
-
-          - step:
-              name: Helm Rolling Deploy
-              identifier: helm_rolling_deploy
-              type: NativeHelm
-              when:
-                condition: <+strategy> == "Rolling"
               spec:
-                timeout: 10m
-
-          - step:
-              name: Helm Canary Deploy
-              identifier: helm_canary_deploy
-              type: NativeHelm
+                skipDryRun: false
+                ignoreReleaseHistFailStatus: false
               when:
-                condition: <+strategy> == "Canary"
-              spec:
-                timeout: 10m
-
+                stageStatus: Success
+                condition: <+stage.variables.strategy> == "rolling"
           - step:
-              name: Helm Final Deploy
-              identifier: helm_final_deploy
-              type: NativeHelm
-              when:
-                condition: <+strategy> == "Canary"
+              type: HelmCanaryDeploy
+              name: Deploy Canary
+              identifier: Deploy_Canary
               spec:
-                timeout: 10m
+                ignoreReleaseHistFailStatus: false
+                skipSteadyStateCheck: false
+                instanceSelection:
+                  type: Count
+                  spec:
+                    count: 1
+              timeout: 10m
+              when:
+                stageStatus: Success
+                condition: <+stage.variables.strategy> == "canary"
+          - step:
+              type: HarnessApproval
+              name: Approval
+              identifier: Approval
+              spec:
+                approvalMessage: Please review the following information and approve the pipeline progression
+                includePipelineExecutionHistory: true
+                isAutoRejectEnabled: false
+                approvers:
+                  userGroups:
+                    - _project_all_users
+                  minimumCount: 1
+                  disallowPipelineExecutor: false
+                approverInputs: []
+              timeout: 1d
+              when:
+                stageStatus: Success
+                condition: <+stage.variables.strategy> == "canary"
+          - step:
+              type: HelmCanaryDelete
+              name: HelmCanaryDelete_1
+              identifier: HelmCanaryDelete_1
+              spec: {}
+              timeout: 10m
+              when:
+                stageStatus: Success
+                condition: <+stage.variables.strategy> == "canary"
+          - step:
+              type: HelmDeploy
+              name: HelmDeploy_2
+              identifier: HelmDeploy_2
+              spec:
+                skipDryRun: false
+                ignoreReleaseHistFailStatus: false
+              timeout: 10m
+              when:
+                stageStatus: Success
+                condition: <+stage.variables.strategy> == "canary"
+        rollbackSteps:
+          - step:
+              name: Helm Rollback
+              identifier: helmRollback
+              type: HelmRollback
+              timeout: 10m
+              spec: {}
     failureStrategies:
       - onFailure:
           errors:
             - AllErrors
           action:
             type: StageRollback
-
     variables:
-          - name: strategy
-            type: String
-            value: <+input>.allowedValues(Canary, Rolling).default(Rolling)
+      - name: strategy
+        type: String
+        description: ""
+        required: true
+        value: <+input>.default(rolling)
 
   EOT
 }
