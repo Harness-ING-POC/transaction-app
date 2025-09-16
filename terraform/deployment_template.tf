@@ -57,20 +57,6 @@ template:
                 timeout: 10m
 
           - step:
-              name: Manual Approval
-              identifier: canary_approval
-              type: HarnessApproval
-              when:
-                condition: <+strategy> == "Canary"
-              spec:
-                approvalMessage: "Approve canary deployment continuation"
-                includePipelineExecutionHistory: true
-                approvers:
-                  userGroups:
-                    - <+input.user_group>
-                timeout: 1h
-
-          - step:
               name: Helm Final Deploy
               identifier: helm_final_deploy
               type: NativeHelm
