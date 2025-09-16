@@ -12,7 +12,7 @@ template:
   identifier: "identifier"
   versionLabel: "ab"
   type: Stage
-  projectIdentifier: ${var.project_id}
+  projectIdentifier: ${var.proj_id}
   orgIdentifier: ${var.org_id}
   tags: {}
   spec:
