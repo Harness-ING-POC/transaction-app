@@ -21,16 +21,6 @@ template:
           identifier: Onboard_Product
           description: ""
           type: Custom
-          variables:
-            - name: service_name
-              type: String
-              value: <+input>.default("default-service")
-            - name: service_identifier
-              type: String
-              value: <+input>.default("default-identifier")
-            - name: service_type
-              type: String
-              value: <+input>.default("NativeHelm")
           spec:
             execution:
               steps:
@@ -54,11 +44,11 @@ template:
                           - varFile:
                               spec:
                                 content: |
-                                  service_name = "<+pipeline.variables.service_name>"
-                                  service_identifier = "<+pipeline.pipeline.variables.service_identifier>"
-                                  service_type = "<+pipeline.pipeline.variables.service_type>"
-                                  org_name = "<+project.name>"
-                                  project_name = "<+org.name>"
+                                  service_name      = "<+pipeline.variables.service_name>"
+                                  service_identifier = "<+pipeline.variables.service_identifier>"
+                                  service_type      = "<+pipeline.variables.service_type>"
+                                  org_name          = "<+org.name>"
+                                  project_name      = "<+project.name>"
                               identifier: onboardingVarFile
                               type: Inline
                         secretManagerRef: harnessSecretManager
@@ -74,4 +64,20 @@ template:
                         type: InheritFromPlan
                     timeout: 10m
           tags: {}
+    variables:
+      - name: service_name
+        type: String
+        description: Provide a value for the service name of your application
+        required: true
+        value: <+input>.default(default_helm_service)
+      - name: service_identifier
+        type: String
+        description: Provide a value for the service identifier
+        required: true
+        value: <+input>.default(defaulthelmservice)
+      - name: service_type
+        type: String
+        description: The type of the service. By default is set to nativeHelm but can take kubernetes values.
+        required: true
+        value: <+input>.default(NativeHelm)
   projectIdentifier: ing175ip1
