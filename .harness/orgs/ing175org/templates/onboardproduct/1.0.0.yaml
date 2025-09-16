@@ -54,6 +54,13 @@ template:
                                     paths:
                                       - resources/terraform_vars.tfvars
                                     connectorRef: harnessconnector
+                          - varFile:
+                              spec:
+                                content: |-
+                                  org_id = "<+org.identifier>>"
+                                  proj_id = "<+project.identifier>>"
+                              identifier: projVars
+                              type: Inline
                         secretManagerRef: harnessSecretManager
                         skipRefreshCommand: false
                     timeout: 10m
