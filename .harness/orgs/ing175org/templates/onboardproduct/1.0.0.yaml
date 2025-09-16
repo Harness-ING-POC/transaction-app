@@ -74,6 +74,30 @@ template:
                         type: InheritFromPlan
                     timeout: 10m
           tags: {}
+          when:
+            pipelineStatus: Success
+            condition: <+pipeline.variables.action_type> == "onboard"
+      - stage:
+          name: Offboard Product
+          identifier: Offboard_Product
+          description: ""
+          type: Custom
+          spec:
+            execution:
+              steps:
+                - step:
+                    type: TerraformDestroy
+                    name: Terraform Destroy
+                    identifier: Terraform_Destroy
+                    spec:
+                      provisionerIdentifier: onboardingTerraformPlan
+                      configuration:
+                        type: InheritFromApply
+                    timeout: 10m
+          tags: {}
+          when:
+            pipelineStatus: Success
+            condition: <+pipeline.variables.action_type> == "offboard"
     variables:
       - name: service_name
         type: String
@@ -90,4 +114,9 @@ template:
         description: The type of the service. By default is set to nativeHelm but can take kubernetes values.
         required: true
         value: <+input>.default(NativeHelm)
+      - name: action_type
+        type: String
+        description: "Set action for pipeline: onboard/offboard"
+        required: true
+        value: ""
   projectIdentifier: ing175ip1
