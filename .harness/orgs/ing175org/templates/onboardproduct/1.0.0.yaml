@@ -118,5 +118,5 @@ template:
         type: String
         description: "Set action for pipeline: onboard/offboard"
         required: true
-        value: ""
+        value: <+input>.default(onboard)
   projectIdentifier: ing175ip1
