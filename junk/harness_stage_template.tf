@@ -1,53 +1,173 @@
-
-terraform {
-  required_providers {
-    harness = {
-      source  = "harness/harness"
-      version = "0.38.5"
-    }
-  }
-}
-
-provider "harness" {
-  endpoint           = "https://app.harness.io/gateway"
-  account_id         = "YOUR_HARNESS_ACCOUNT_ID"
-  platform_api_key   = "YOUR_HARNESS_PLATFORM_API_KEY"
-}
-
-# Create a Harness Stage Template
-resource "harness_platform_template" "stage_template" {
-  name        = "Reusable Deploy Stage"
-  identifier  = "reusable_deploy_stage"
-  org_id      = "default"
-  project_id  = "default"
-  version     = "v1"
-  type        = "Stage"
-
-  yaml = <<EOF
+resource "harness_platform_template" "stage_template_inline" {
+  
+  identifier    = "kingsroaddeployment"
+  org_id        = var.org_id
+  project_id    = var.proj_id
+  name          = "Kingsroad deployment"
+  comments      = "comments"
+  version       = "1.0.0"
+  is_stable     = true
+  template_yaml = <<-EOT
 template:
-  name: Reusable Deploy Stage
-  identifier: reusable_deploy_stage
-  versionLabel: v1
+  name: "Kingsroad deployment"
+  identifier: "kingsroaddeployment"
+  versionLabel: "1.0.0"
   type: Stage
-  projectIdentifier: default
-  orgIdentifier: default
+  projectIdentifier: ${var.proj_id}
+  orgIdentifier: ${var.org_id}
   spec:
     type: Deployment
     spec:
+      deploymentType: NativeHelm
       service:
         serviceRef: <+input>
+        serviceInputs: <+input>
       environment:
         environmentRef: <+input>
-        infrastructureDefinitions:
-          - identifier: <+input>
+        deployToAll: false
+        environmentInputs: <+input>
+        infrastructureDefinitions: <+input>
       execution:
         steps:
           - step:
-              name: Echo Message
-              identifier: echo_message
+              name: Strategy Selector
+              identifier: strategy_selector
               type: ShellScript
               spec:
                 shell: Bash
-                command: echo "Deploying via reusable stage template"
-EOF
+                command: echo "Selected strategy: <+input.strategy>"
+              timeout: 10m
+
+          - step:
+              name: Helm Rolling Deploy
+              identifier: helm_rolling_deploy
+              type: NativeHelm
+              when:
+                condition: <+input.strategy> == "Rolling"
+              spec:
+                timeout: 10m
+
+          - step:
+              name: Helm Canary Deploy
+              identifier: helm_canary_deploy
+              type: NativeHelm
+              when:
+                condition: <+input.strategy> == "Canary"
+              spec:
+                timeout: 10m
+
+          - step:
+              name: Manual Approval
+              identifier: canary_approval
+              type: HarnessApproval
+              when:
+                condition: <+input.strategy> == "Canary"
+              spec:
+                approvalMessage: "Approve canary deployment continuation"
+                includePipelineExecutionHistory: true
+                approvers:
+                  userGroups:
+                    - <+input.user_group>
+                timeout: 1h
+
+          - step:
+              name: Helm Final Deploy
+              identifier: helm_final_deploy
+              type: NativeHelm
+              when:
+                condition: <+input.strategy> == "Canary"
+              spec:
+                timeout: 10m
+    failureStrategies:
+      - onFailure:
+          errors:
+            - AllErrors
+          action:
+            type: StageRollback
+  EOT
 }
+
+
+
+# resource "harness_platform_template" "stage_template_inline" {
+  
+#   identifier    = "kingsroaddeployment"
+#   org_id        = var.org_id
+#   project_id    = var.proj_id
+#   name          = "Kingsroad deployment"
+#   comments      = "comments"
+#   version       = "1.0.0"
+#   is_stable     = true
+#   template_yaml = <<-EOT
+# template:
+#   name: Kingsroad deployment
+#   identifier: kingsroaddeployment
+#   versionLabel: 1.0.0
+#   type: Stage
+#   projectIdentifier: ${var.proj_id}
+#   orgIdentifier: ${var.org_id}
+#   spec:
+#     type: Deployment
+#     spec:
+#       deploymentType: NativeHelm
+#       service:
+#         serviceRef: <+input.service>
+#       environment:
+#         environmentRef: <+input.environment>
+#         deployToAll: false
+#         infrastructureDefinitions:
+#           - identifier: <+input.infrastructure>
+#       execution:
+#         steps:
+#           - step:
+#               name: Strategy Selector
+#               identifier: strategy_selector
+#               type: ShellScript
+#               spec:
+#                 shell: Bash
+#                 command: echo "Selected strategy: <+input.strategy>"
+#               timeout: 10m
+
+#           - step:
+#               name: Helm Rolling Deploy
+#               identifier: helm_rolling_deploy
+#               type: NativeHelm
+#               when:
+#                 condition: <+input.strategy> == "Rolling"
+#               spec:
+#                 timeout: 10m
+
+#           - step:
+#               name: Helm Canary Deploy
+#               identifier: helm_canary_deploy
+#               type: NativeHelm
+#               when:
+#                 condition: <+input.strategy> == "Canary"
+#               spec:
+#                 timeout: 10m
+
+#           - step:
+#               name: Manual Approval
+#               identifier: canary_approval
+#               type: HarnessApproval
+#               when:
+#                 condition: <+input.strategy> == "Canary"
+#               spec:
+#                 approvalMessage: "Approve canary deployment continuation"
+#                 includePipelineExecutionHistory: true
+#                 approvers:
+#                   userGroups:
+#                     - <+input.user_group>
+#                 timeout: 1h
+
+#           - step:
+#               name: Helm Final Deploy
+#               identifier: helm_final_deploy
+#               type: NativeHelm
+#               when:
+#                 condition: <+input.strategy> == "Canary"
+#               spec:
+#                 timeout: 10m
+
+#   EOT
+# }
