@@ -23,7 +23,7 @@ resource "harness_platform_infrastructure" "infra" {
   yaml = <<-EOT
 infrastructureDefinition:
   name: k8s-helm
-  identifier: k8shelm-${each.key}
+  identifier: k8shelm${each.key}
   orgIdentifier: ${var.org_id}
   projectIdentifier: ${var.proj_id}
   environmentRef: ${each.key}
