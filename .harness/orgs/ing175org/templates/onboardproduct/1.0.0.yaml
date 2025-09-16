@@ -58,7 +58,7 @@ template:
                               spec:
                                 content: |-
                                   org_id = "<+org.identifier>>"
-                                  proj_id = "<+project.identifier>>"
+                                  proj_id = "<+project.identifier>"
                               identifier: projVars
                               type: Inline
                         secretManagerRef: harnessSecretManager
