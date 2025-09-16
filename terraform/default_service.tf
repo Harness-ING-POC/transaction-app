@@ -29,7 +29,7 @@ resource "harness_platform_service" "simple_service" {
   identifier  = var.service_identifier #"transactioningestortest"
   description = "Minimal service without connectors"
   org_id      = var.org_id
-  project_id  = var.org_id
+  project_id  = var.proj_id
   yaml = <<-EOT
       service:
         name: ${var.service_name}
@@ -58,6 +58,6 @@ resource "harness_platform_service" "simple_service" {
                     fetchHelmChartMetadata: false
         gitOpsEnabled: false
         orgIdentifier: ${var.org_id}
-        projectIdentifier: ${var.org_id}
+        projectIdentifier: ${var.proj_id}
   EOT
 }
