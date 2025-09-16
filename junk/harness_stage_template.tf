@@ -35,7 +35,7 @@ template:
               type: ShellScript
               spec:
                 shell: Bash
-                command: echo "Selected strategy: <+input.strategy>"
+                command: echo "Selected strategy: <+strategy>"
               timeout: 10m
 
           - step:
@@ -43,7 +43,7 @@ template:
               identifier: helm_rolling_deploy
               type: NativeHelm
               when:
-                condition: <+input.strategy> == "Rolling"
+                condition: <+strategy> == "Rolling"
               spec:
                 timeout: 10m
 
@@ -52,7 +52,7 @@ template:
               identifier: helm_canary_deploy
               type: NativeHelm
               when:
-                condition: <+input.strategy> == "Canary"
+                condition: <+strategy> == "Canary"
               spec:
                 timeout: 10m
 
@@ -61,7 +61,7 @@ template:
               identifier: canary_approval
               type: HarnessApproval
               when:
-                condition: <+input.strategy> == "Canary"
+                condition: <+strategy> == "Canary"
               spec:
                 approvalMessage: "Approve canary deployment continuation"
                 includePipelineExecutionHistory: true
@@ -75,7 +75,7 @@ template:
               identifier: helm_final_deploy
               type: NativeHelm
               when:
-                condition: <+input.strategy> == "Canary"
+                condition: <+strategy> == "Canary"
               spec:
                 timeout: 10m
     failureStrategies:
@@ -84,6 +84,12 @@ template:
             - AllErrors
           action:
             type: StageRollback
+
+    variables:
+          - name: strategy
+            type: String
+            value: <+input>.allowedValues(Canary, Rolling).default(Rolling)
+
   EOT
 }
 
