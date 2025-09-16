@@ -1,29 +1,4 @@
 
-variable "service_name" {
-  type        = string
-  description = "Name of the service"
-}
-
-variable "service_identifier" {
-  type        = string
-  description = "Identifier for the service"
-}
-
-variable "service_type" {
-  type        = string
-  description = "The type of service"
-}
-
-variable "org_id" {
-  type        = string
-  description = "Id of the org"
-}
-
-variable "proj_id" {
-  type        = string
-  description = "Id of the project"
-}
-
 resource "harness_platform_service" "simple_service" {
   name        = var.service_name #"transaction-ingestor-test"
   identifier  = var.service_identifier #"transactioningestortest"
