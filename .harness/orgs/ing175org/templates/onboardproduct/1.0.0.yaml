@@ -62,7 +62,7 @@ template:
                               identifier: projVars
                               type: Inline
                         secretManagerRef: harnessSecretManager
-                        workspace: <+project.identifier>
+                        workspace: <+pipeline.variables.service_name>
                         skipRefreshCommand: false
                     timeout: 10m
                 - step:
